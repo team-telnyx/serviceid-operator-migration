@@ -1,0 +1,27 @@
+apiVersion: infra-core.telnyx.com/v1alpha1
+kind: ServiceId
+metadata:
+  name: test-serviceid-vault-policy
+  namespace: op-service-id-system
+  labels:
+    app: test-serviceid
+    environment: dev
+    managed-by: infra-core-squad
+spec:
+  # ServiceAccount to be created
+  k8s_sa_name: test-serviceid-sa
+  k8s_sa_namespace: op-service-id-system
+  k8s_sa_rules:
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["get", "list", "watch"]
+  
+  # Vault configuration
+  vault_k8s_auth_path: tlnx-backend-lv1-dev
+  vault_k8s_auth_role_name: test-serviceid-vault-policy
+  vault_policy_name: test-serviceid-policy
+  vault_policies:
+    - capabilities: ["read", "list"]
+      path: op-service-id-system/data/test-serviceid-vault-policy
+    - capabilities: ["read", "list"]
+      path: op-service-id-system/data/test-serviceid-vault-policy/*

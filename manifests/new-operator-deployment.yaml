@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infra-oci-serviceid-operator
+  namespace: op-service-id-system
+  labels:
+    app: infra-oci-serviceid-operator
+    squad: infra-core-squad
+    managed-by: infra-core-squad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infra-oci-serviceid-operator
+  template:
+    metadata:
+      labels:
+        app: infra-oci-serviceid-operator
+        squad: infra-core-squad
+      annotations:
+        # Reuse existing Vault setup from old operator
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-token: "true"
+        vault.hashicorp.com/agent-run-as-user: "1001"
+        vault.hashicorp.com/auth-path: auth/tlnx-backend-lv1-dev
+        vault.hashicorp.com/role: op-service-id
+        vault.hashicorp.com/service: https://vault.query.dev.telnyx.io
+    spec:
+      serviceAccountName: op-service-id-controller-manager
+      automountServiceAccountToken: true
+      containers:
+        - name: manager
+          image: registry.internal.telnyx.com/jenkins/infra-oci-serviceid-operator:2026.01.09.19.18.7f37159
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          env:
+            - name: CLUSTER_NAME
+              value: tlnx-backend-lv1-dev
+            - name: ENV
+              value: dev
+            - name: LOG_LEVEL
+              value: debug
+          volumeMounts:
+            - name: vault-secrets
+              mountPath: /vault/secrets
+      volumes:
+        - name: vault-secrets
+          emptyDir:
+            medium: Memory
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
