@@ -17,12 +17,12 @@ argocd version --client
 
 ## Login with Okta SSO
 
-> **⚠️ Verify ArgoCD URL:** Common URLs are:
-> - `argocd.telnyx.io` (production)
-> - `argocd.dev.telnyx.io` (dev)
-> - `argocd.query.dev.telnyx.io`
+> **ArgoCD URLs at Telnyx:**
+> - **Production:** `argocd.telnyx.io`
+> - **Dev:** `argocd.dev.telnyx.io`
+> - **Query/Dev:** `argocd.query.dev.telnyx.io`
 > 
-> Check your existing kubeconfig or ask infra-core-squad for the correct URL.
+> **For LV1 (dev cluster):** Use `argocd.dev.telnyx.io`
 
 ### Step 1: Initiate SSO Login
 ```bash
@@ -71,7 +71,10 @@ argocd app list | grep service-id-operator
 
 ## Managing Service-Id-Operator Application
 
-Replace `<ARGOCD_URL>` with your actual ArgoCD server (e.g., `argocd.telnyx.io` or `argocd.dev.telnyx.io`).
+**Confirmed ArgoCD URLs:**
+- **Production:** `argocd.telnyx.io`
+- **Dev (LV1):** `argocd.dev.telnyx.io`
+- **Query/Dev:** `argocd.query.dev.telnyx.io`
 
 ### Get Application Details
 ```bash

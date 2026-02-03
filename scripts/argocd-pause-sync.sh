@@ -3,7 +3,11 @@
 set -e
 
 APP_NAME="service-id-operator-tlnx-backend-lv1-dev"
-ARGOCD_URL="${ARGOCD_URL:-<ARGOCD_URL>}"  # Set ARGOCD_URL env var or replace
+# ArgoCD URLs at Telnyx:
+#   Production: argocd.telnyx.io
+#   Dev (LV1):  argocd.dev.telnyx.io
+#   Query/Dev:  argocd.query.dev.telnyx.io
+ARGOCD_URL="${ARGOCD_URL:-argocd.dev.telnyx.io}"  # Default to dev for LV1
 
 echo "=========================================="
 echo "ArgoCD: Pause Auto-Sync"
