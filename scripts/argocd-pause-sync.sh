@@ -3,6 +3,7 @@
 set -e
 
 APP_NAME="service-id-operator-tlnx-backend-lv1-dev"
+ARGOCD_URL="${ARGOCD_URL:-<ARGOCD_URL>}"  # Set ARGOCD_URL env var or replace
 
 echo "=========================================="
 echo "ArgoCD: Pause Auto-Sync"
@@ -18,26 +19,40 @@ if ! command -v argocd &> /dev/null; then
     exit 1
 fi
 
+# Common ArgoCD URLs at Telnyx
+echo "Common ArgoCD URLs:"
+echo "  - argocd.telnyx.io (production)"
+echo "  - argocd.dev.telnyx.io (dev)"
+echo "  - argocd.query.dev.telnyx.io"
+echo ""
+
 # Login instructions
 echo "[Step 1] Login to ArgoCD with Okta SSO"
 echo ""
 echo "If not already logged in, run:"
+echo "  argocd login <ARGOCD_URL> --sso"
+echo ""
+echo "Examples:"
 echo "  argocd login argocd.telnyx.io --sso"
+echo "  argocd login argocd.dev.telnyx.io --sso"
 echo ""
 echo "This will open a browser for Okta authentication."
 echo ""
 
 # Check current login status
 echo "[Step 2] Checking ArgoCD login status..."
-argocd account get-user-info 2>/dev/null || echo "Not logged in. Please run: argocd login argocd.telnyx.io --sso"
+argocd account get-user-info 2>/dev/null || echo "Not logged in. Please run: argocd login <ARGOCD_URL> --sso"
 echo ""
 
 # Pause auto-sync
 echo "[Step 3] Pausing auto-sync for $APP_NAME..."
 echo "Command: argocd app set $APP_NAME --sync-policy none"
 echo ""
+echo "Or with explicit server:"
+echo "  argocd app set $APP_NAME --sync-policy none --server <ARGOCD_URL>"
+echo ""
 echo "Or disable auto-sync in the UI:"
-echo "  1. Open https://argocd.telnyx.io"
+echo "  1. Open https://<ARGOCD_URL>"
 echo "  2. Find application: $APP_NAME"
 echo "  3. Click 'App Details' -> 'Sync Policy'"
 echo "  4. Set 'Automated Sync' to 'Disable'"
