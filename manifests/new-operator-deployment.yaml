@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: infra-oci-serviceid-operator
-  namespace: infra-core-squad
+  namespace: op-service-id-system
   labels:
     app: infra-oci-serviceid-operator
     squad: infra-core-squad
@@ -24,21 +24,18 @@ spec:
         app.telnyx.com/name: infra-oci-serviceid-operator
         # Vault Agent Injector configuration
         vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "infra-oci-serviceid-operator"
-        vault.hashicorp.com/agent-inject-secret-token: "auth/token/lookup-self"
-        vault.hashicorp.com/agent-inject-template-token: |
-          {{ with secret "auth/token/lookup-self" }}{{ .Data.id }}{{ end }}
-        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/agent-inject-token: "true"
         vault.hashicorp.com/agent-run-as-user: "1001"
         vault.hashicorp.com/auth-path: auth/tlnx-backend-lv1-dev
+        vault.hashicorp.com/role: op-service-id
         vault.hashicorp.com/service: https://vault.query.dev.telnyx.io
     spec:
       serviceAccountName: op-service-id-controller-manager
       automountServiceAccountToken: true
       containers:
         - name: manager
-          # Updated image with file-based Vault token loading fix (commit: 05027d3)
-          image: registry.internal.telnyx.com/jenkins/infra-oci-serviceid-operator:05027d3
+          # NEW IMAGE: INFRA-14150 fix with file-based token loading (fe48447)
+          image: registry.internal.telnyx.com/jenkins/infra-oci-serviceid-operator:infra-14150-nil-pointer-dereference-in-vault-client-fe48447
           imagePullPolicy: IfNotPresent
           resources:
             requests:
