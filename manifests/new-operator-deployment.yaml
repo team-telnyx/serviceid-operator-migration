@@ -6,7 +6,8 @@ metadata:
   labels:
     app: infra-oci-serviceid-operator
     squad: infra-core-squad
-    managed-by: infra-core-squad
+    app.telnyx.com/managed-by: infra-core-squad
+    app.telnyx.com/name: infra-oci-serviceid-operator
 spec:
   replicas: 1
   selector:
@@ -18,7 +19,10 @@ spec:
         app: infra-oci-serviceid-operator
         squad: infra-core-squad
       annotations:
-        # Reuse existing Vault setup from old operator
+        # Telnyx required annotations
+        app.telnyx.com/managed-by: infra-core-squad
+        app.telnyx.com/name: infra-oci-serviceid-operator
+        # Vault Agent Injector configuration
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-inject-token: "true"
         vault.hashicorp.com/agent-run-as-user: "1001"
@@ -30,7 +34,9 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: manager
-          image: registry.internal.telnyx.com/jenkins/infra-oci-serviceid-operator:2026.01.09.19.18.7f37159
+          # NOTE: This image requires a code fix to read Vault token from file
+          # See: docs/vault-token-issue.md for details
+          image: registry.internal.telnyx.com/jenkins/infra-oci-serviceid-operator:infra-14150-nil-pointer-dereference-in-vault-client-05027d3
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -46,13 +52,11 @@ spec:
               value: dev
             - name: LOG_LEVEL
               value: debug
-          volumeMounts:
-            - name: vault-secrets
-              mountPath: /vault/secrets
-      volumes:
-        - name: vault-secrets
-          emptyDir:
-            medium: Memory
+            # Vault configuration
+            - name: VAULT_ADDR
+              value: "https://vault.query.dev.telnyx.io"
+            - name: VAULT_K8S_AUTH_PATH
+              value: "auth/tlnx-backend-lv1-dev"
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/control-plane
