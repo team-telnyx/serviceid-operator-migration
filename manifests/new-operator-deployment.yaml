@@ -25,7 +25,7 @@ spec:
         # Vault Agent Injector configuration
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/agent-inject-token: "true"
-        vault.hashicorp.com/agent-run-as-user: "1001"
+        vault.hashicorp.com/agent-run-as-user: "65532"
         vault.hashicorp.com/auth-path: auth/tlnx-backend-lv1-dev
         vault.hashicorp.com/role: op-service-id
         vault.hashicorp.com/service: https://vault.query.dev.telnyx.io
