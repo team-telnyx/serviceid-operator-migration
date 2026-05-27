@@ -1,5 +1,14 @@
 # ServiceId Operator Migration
 
+> ⚠️ **DEPRECATED — This repository is archived and no longer maintained.**
+>
+> The migration from the Ansible-based operator to the Go-based operator is complete.
+> The new operator lives at:
+>
+> **<https://github.com/team-telnyx/infra-oci-serviceid-operator>**
+>
+> No further changes will be made to this repository.
+
 Migration from old Ansible-based operator to new Go-based `infra-oci-serviceid-operator`.
 
 ## Overview
